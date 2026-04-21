@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>ParkSmart — Intelligent Parking System</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --bg:#07090f;--bg2:#0d1221;
+  --glass:rgba(255,255,255,0.04);--gba:rgba(255,255,255,0.08);
+  --cyan:#00d4ff;--purple:#7f5af0;--green:#00ffaa;--red:#ff4757;
+  --text:#e8eaf6;--muted:#5c6380;
+  --gcyan:rgba(0,212,255,0.25);--gpurp:rgba(127,90,240,0.25);
+  --ggreen:rgba(0,255,170,0.2);--gred:rgba(255,71,87,0.2);
+}
+html{scroll-behavior:smooth}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+
+/* ── AMBIENT ── */
+.bg-grid{position:fixed;inset:0;background-image:linear-gradient(rgba(0,212,255,0.025) 1px,transparent 1px),linear-gradient(90deg,rgba(0,212,255,0.025) 1px,transparent 1px);background-size:60px 60px;pointer-events:none;z-index:0}
+.orb{position:fixed;border-radius:50%;filter:blur(80px);opacity:.1;pointer-events:none;z-index:0}
+.o1{width:500px;height:500px;background:var(--purple);top:-200px;left:-200px}
+.o2{width:400px;height:400px;background:var(--cyan);bottom:-100px;right:-100px}
+.o3{width:300px;height:300px;background:var(--green);top:45%;left:45%}
+
+/* ── INTRO ── */
+#intro{position:fixed;inset:0;background:#04060d;z-index:1000;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden}
+.iroad{position:absolute;bottom:0;left:0;right:0;height:110px;background:linear-gradient(135deg,#111,#1a1a2e);border-top:2px solid rgba(0,212,255,0.2)}
+.istripe{position:absolute;top:50%;transform:translateY(-50%);height:5px;border-radius:3px;background:linear-gradient(90deg,transparent,rgba(255,211,42,.6),transparent)}
+.icar{position:absolute;bottom:38px;font-size:32px;opacity:0;filter:drop-shadow(0 0 10px var(--cyan))}
+.ititle{text-align:center;z-index:2;margin-bottom:120px}
+.ilogo{font-family:'Orbitron',monospace;font-size:clamp(28px,7vw,64px);font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple),var(--green));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;opacity:0;letter-spacing:5px}
+.isub{font-size:13px;color:var(--muted);letter-spacing:4px;text-transform:uppercase;opacity:0;margin-top:8px}
+.ibar-wrap{width:220px;height:3px;background:rgba(255,255,255,0.08);border-radius:2px;margin:20px auto 0;overflow:hidden;opacity:0}
+.ibar{height:100%;width:0;background:linear-gradient(90deg,var(--cyan),var(--purple));border-radius:2px;box-shadow:0 0 10px var(--cyan)}
+
+/* ── SETUP ── */
+#setup{position:fixed;inset:0;background:rgba(4,6,13,.97);backdrop-filter:blur(16px);z-index:800;display:none;align-items:center;justify-content:center}
+.sbox{background:rgba(255,255,255,0.03);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:44px 40px;width:min(430px,90vw);text-align:center;box-shadow:0 0 80px var(--gpurp)}
+.sbox .em{font-size:52px;margin-bottom:18px;display:block;animation:float 3s ease-in-out infinite}
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.sbox h2{font-family:'Orbitron',monospace;font-size:22px;font-weight:900;background:linear-gradient(135deg,var(--cyan),var(--purple));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;margin-bottom:6px}
+.sbox p{color:var(--muted);font-size:13px;margin-bottom:26px}
+.sbox input{width:100%;padding:15px;background:rgba(0,0,0,.4);border:1px solid var(--gba);border-radius:12px;color:var(--text);font-size:26px;font-family:'Orbitron',monospace;font-weight:700;text-align:center;outline:none;margin-bottom:18px;transition:border-color .2s,box-shadow .2s}
+.sbox input:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,.12)}
+.sbox input::-webkit-inner-spin-button{display:none}
+.sbtn{width:100%;padding:15px;border:none;border-radius:12px;background:linear-gradient(135deg,var(--purple),var(--cyan));color:#fff;font-size:14px;font-weight:700;font-family:'Orbitron',monospace;cursor:pointer;letter-spacing:1px;transition:all .2s}
+.sbtn:hover{filter:brightness(1.15);transform:translateY(-2px);box-shadow:0 0 30px var(--gpurp)}
+.sbtn:active{transform:scale(.98)}
+
+/* ── APP ── */
+#app{position:relative;z-index:1;max-width:1160px;margin:0 auto;padding:24px 16px 80px;opacity:0}
+header{display:flex;align-items:center;justify-content:space-between;margin-bottom:36px;flex-wrap:wrap;gap:16px}
+header h1{font-family:'Orbitron',monospace;font-size:clamp(18px,4vw,30px);font-weight:900;background:linear-gradient(135deg,#fff 40%,var(--cyan));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+header p{color:var(--muted);font-size:12px;margin-top:4px}
+#sim-btn{display:flex;align-items:center;gap:9px;background:var(--glass);border:1px solid var(--gba);backdrop-filter:blur(12px);padding:10px 18px;border-radius:50px;cursor:pointer;font-size:13px;font-weight:600;font-family:'Inter',sans-serif;color:var(--text);transition:all .3s}
+#sim-btn:hover,#sim-btn.on{border-color:var(--cyan);color:var(--cyan);box-shadow:0 0 20px var(--gcyan);background:rgba(0,212,255,.08)}
+.sdot{width:8px;height:8px;border-radius:50%;background:var(--muted);transition:background .3s}
+#sim-btn.on .sdot{background:var(--cyan);box-shadow:0 0 8px var(--cyan);animation:blink 1s infinite}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:.3}}
+
+/* ── STATS ── */
+.stats{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;margin-bottom:24px}
+@media(max-width:580px){.stats{grid-template-columns:1fr}}
+.sc{background:var(--glass);border:1px solid var(--gba);backdrop-filter:blur(16px);border-radius:16px;padding:24px;position:relative;overflow:hidden;transition:transform .3s,box-shadow .3s;cursor:default}
+.sc::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--ac),transparent);opacity:.7}
+.sc:hover{transform:translateY(-4px)}
+.sc.pc{--ac:var(--purple)}.sc.gc{--ac:var(--green)}.sc.rc{--ac:var(--red)}
+.sc.pc:hover{box-shadow:0 0 30px var(--gpurp)}
+.sc.gc:hover{box-shadow:0 0 30px var(--ggreen)}
+.sc.rc:hover{box-shadow:0 0 30px var(--gred)}
+.slabel{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1.5px;color:var(--muted);margin-bottom:8px}
+.sval{font-family:'Orbitron',monospace;font-size:44px;font-weight:900;line-height:1}
+.sc.pc .sval{color:var(--purple);text-shadow:0 0 20px var(--gpurp)}
+.sc.gc .sval{color:var(--green);text-shadow:0 0 20px var(--ggreen)}
+.sc.rc .sval{color:var(--red);text-shadow:0 0 20px var(--gred)}
+.sicon{position:absolute;right:18px;top:50%;transform:translateY(-50%);font-size:34px;opacity:.14}
+.sbar{margin-top:12px;height:3px;background:rgba(255,255,255,.06);border-radius:2px;overflow:hidden}
+.sbar-fill{height:100%;border-radius:2px;transition:width .9s cubic-bezier(.34,1.56,.64,1)}
+.pc .sbar-fill{background:var(--purple);box-shadow:0 0 8px var(--purple)}
+.gc .sbar-fill{background:var(--green);box-shadow:0 0 8px var(--green)}
+.rc .sbar-fill{background:var(--red);box-shadow:0 0 8px var(--red)}
+
+/* ── ACTIONS ── */
+.actions{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin-bottom:24px}
+@media(max-width:680px){.actions{grid-template-columns:1fr}}
+.panel{background:var(--glass);border:1px solid var(--gba);backdrop-filter:blur(16px);border-radius:16px;padding:28px 24px;transition:border-color .3s}
+.panel:hover{border-color:rgba(255,255,255,.13)}
+.ptitle{font-size:15px;font-weight:700;margin-bottom:20px;display:flex;align-items:center;gap:10px}
+.picon{width:34px;height:34px;border-radius:9px;display:flex;align-items:center;justify-content:center;font-size:16px}
+.picon.g{background:rgba(0,255,170,.1)}.picon.r{background:rgba(255,71,87,.1)}
+.flabel{display:block;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;color:var(--muted);margin-bottom:6px}
+.finput,.fselect{width:100%;padding:11px 14px;background:rgba(0,0,0,.35);border:1px solid var(--gba);border-radius:10px;color:var(--text);font-size:14px;font-family:'Inter',sans-serif;outline:none;transition:border-color .25s,box-shadow .25s;margin-bottom:12px}
+.finput:focus,.fselect:focus{border-color:var(--cyan);box-shadow:0 0 0 3px rgba(0,212,255,.1)}
+.fselect option{background:#1a1d2e}
+.btn{width:100%;padding:13px;border:none;border-radius:10px;font-size:14px;font-weight:700;font-family:'Inter',sans-serif;cursor:pointer;transition:all .2s;letter-spacing:.3px}
+.btn:active{transform:scale(.97)}
+.btn-p{background:linear-gradient(135deg,rgba(0,255,170,.18),rgba(0,212,255,.08));border:1px solid rgba(0,255,170,.28);color:var(--green)}
+.btn-p:hover{background:linear-gradient(135deg,rgba(0,255,170,.28),rgba(0,212,255,.15));box-shadow:0 0 22px var(--ggreen);transform:translateY(-1px)}
+.btn-r{background:linear-gradient(135deg,rgba(255,71,87,.18),rgba(255,71,87,.05));border:1px solid rgba(255,71,87,.28);color:var(--red)}
+.btn-r:hover{background:linear-gradient(135deg,rgba(255,71,87,.28),rgba(255,71,87,.12));box-shadow:0 0 22px var(--gred);transform:translateY(-1px)}
+.result{margin-top:12px;padding:10px 14px;border-radius:9px;font-size:13px;font-weight:500;opacity:0;transform:translateY(-5px);transition:opacity .3s,transform .3s;pointer-events:none}
+.result.show{opacity:1;transform:translateY(0);pointer-events:auto}
+.result.ok{background:rgba(0,255,170,.07);border:1px solid rgba(0,255,170,.2);color:var(--green)}
+.result.err{background:rgba(255,71,87,.07);border:1px solid rgba(255,71,87,.2);color:var(--red)}
+
+/* ── FLYING CAR ── */
+#fcar{position:fixed;font-size:30px;z-index:500;pointer-events:none;display:none;filter:drop-shadow(0 0 14px var(--cyan))}
+
+/* ── LOT GRID ── */
+.lot{background:var(--glass);border:1px solid var(--gba);backdrop-filter:blur(16px);border-radius:20px;padding:28px 24px}
+.lot-hdr{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;flex-wrap:wrap;gap:12px}
+.lot-title{font-family:'Orbitron',monospace;font-size:15px;font-weight:700;color:var(--cyan);text-shadow:0 0 20px var(--gcyan)}
+.legend{display:flex;gap:18px}
+.li{display:flex;align-items:center;gap:7px;font-size:12px;color:var(--muted);font-weight:500}
+.dot{width:9px;height:9px;border-radius:50%}
+.df{background:var(--green);box-shadow:0 0 7px var(--green)}
+.do{background:var(--red);box-shadow:0 0 7px var(--red)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:12px}
+@media(max-width:480px){.grid{grid-template-columns:repeat(auto-fill,minmax(90px,1fr))}}
+
+/* Spot cards */
+.spot{border-radius:14px;padding:16px 10px;text-align:center;border:1px solid transparent;position:relative;overflow:hidden;transition:transform .3s cubic-bezier(.34,1.56,.64,1),box-shadow .3s,background .4s,border-color .4s}
+.spot:hover{transform:scale(1.07) translateY(-3px)}
+.spot.free{background:rgba(0,255,170,.05);border-color:rgba(0,255,170,.15)}
+.spot.free:hover{box-shadow:0 0 28px var(--ggreen);border-color:rgba(0,255,170,.4)}
+.spot.occ{background:rgba(255,71,87,.06);border-color:rgba(255,71,87,.18)}
+.spot.occ:hover{box-shadow:0 0 28px var(--gred);border-color:rgba(255,71,87,.38)}
+.snum{font-size:10px;font-weight:700;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+.semoji{font-size:28px;margin-bottom:7px;line-height:1;display:block;transition:transform .4s cubic-bezier(.34,1.56,.64,1)}
+.spot:hover .semoji{transform:scale(1.22)}
+.sstatus{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px}
+.free .sstatus{color:var(--green);text-shadow:0 0 8px var(--green)}
+.occ .sstatus{color:var(--red);text-shadow:0 0 8px var(--red)}
+.splate{font-size:10px;color:var(--muted);margin-top:4px;word-break:break-all}
+
+/* Flash animations */
+@keyframes flashG{0%{background:rgba(0,255,170,.45)}100%{background:rgba(0,255,170,.05)}}
+@keyframes flashR{0%{background:rgba(255,71,87,.45)}100%{background:rgba(255,71,87,.06)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.1)}}
+.fg{animation:flashG .65s ease forwards,pulse .4s ease}
+.fr{animation:flashR .65s ease forwards,pulse .4s ease}
+
+/* ── TOAST ── */
+#toasts{position:fixed;bottom:22px;right:22px;z-index:9999;display:flex;flex-direction:column-reverse;gap:8px}
+.toast{padding:13px 18px;border-radius:12px;font-size:13px;font-weight:600;display:flex;align-items:center;gap:8px;backdrop-filter:blur(16px);max-width:290px;animation:tin .4s cubic-bezier(.34,1.56,.64,1)}
+.toast.ok{background:rgba(0,255,170,.1);border:1px solid rgba(0,255,170,.22);color:var(--green)}
+.toast.err{background:rgba(255,71,87,.1);border:1px solid rgba(255,71,87,.22);color:var(--red)}
+.toast.info{background:rgba(0,212,255,.1);border:1px solid rgba(0,212,255,.22);color:var(--cyan)}
+.toast.bye{animation:tout .35s ease forwards}
+@keyframes tin{from{opacity:0;transform:translateX(40px) scale(.9)}to{opacity:1;transform:translateX(0) scale(1)}}
+@keyframes tout{from{opacity:1;transform:translateX(0)}to{opacity:0;transform:translateX(40px)}}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:var(--bg)}
+::-webkit-scrollbar-thumb{background:var(--gba);border-radius:4px}
+</style>
+</head>
+<body>
+
+<!-- Ambient -->
+<div class="bg-grid"></div>
+<div class="orb o1"></div><div class="orb o2"></div><div class="orb o3"></div>
+
+<!-- Flying car actor -->
+<div id="fcar">🚗</div>
+
+<!-- Toasts -->
+<div id="toasts"></div>
+
+<!-- ══ INTRO ══ -->
+<div id="intro">
+  <div class="ititle">
+    <div class="ilogo" id="ilogo">PARKSMART</div>
+    <div class="isub" id="isub">Intelligent Parking Control System</div>
+    <div class="ibar-wrap" id="ibw"><div class="ibar" id="ibar"></div></div>
+  </div>
+  <div class="iroad">
+    <div class="istripe" style="width:80px;left:8%"></div>
+    <div class="istripe" style="width:110px;left:30%"></div>
+    <div class="istripe" style="width:80px;left:55%"></div>
+    <div class="istripe" style="width:100px;left:75%"></div>
+  </div>
+  <div class="icar" id="ic1">🚗</div>
+  <div class="icar" id="ic2" style="bottom:52px;font-size:26px">🏍️</div>
+  <div class="icar" id="ic3" style="bottom:42px;font-size:36px">🚙</div>
+</div>
+
+<!-- ══ SETUP ══ -->
+<div id="setup">
+  <div class="sbox" id="sbox">
+    <span class="em">🅿️</span>
+    <h2>INITIALIZE LOT</h2>
+    <p>How many parking spots does your lot have?</p>
+    <input type="number" id="snum" value="12" min="1" max="50"/>
+    <button class="sbtn" onclick="initLot()">LAUNCH SYSTEM →</button>
+  </div>
+</div>
+
+<!-- ══ APP ══ -->
+<div id="app">
+  <header>
+    <div>
+      <h1>PARKSMART</h1>
+      <p>Real-time Parking Control System</p>
+    </div>
+    <button id="sim-btn" onclick="toggleSim()">
+      <div class="sdot" id="sdot"></div>
+      <span id="slabel">Live Simulation</span>
+    </button>
+  </header>
+
+  <!-- Stats -->
+  <div class="stats">
+    <div class="sc pc"><div class="slabel">Total Spots</div><div class="sval" id="st">0</div><div class="sicon">🅿️</div><div class="sbar"><div class="sbar-fill" id="bt" style="width:100%"></div></div></div>
+    <div class="sc gc"><div class="slabel">Available</div><div class="sval" id="sf">0</div><div class="sicon">✅</div><div class="sbar"><div class="sbar-fill" id="bf" style="width:100%"></div></div></div>
+    <div class="sc rc"><div class="slabel">Occupied</div><div class="sval" id="so">0</div><div class="sicon">🚗</div><div class="sbar"><div class="sbar-fill" id="bo" style="width:0%"></div></div></div>
+  </div>
+
+  <!-- Actions -->
+  <div class="actions">
+    <div class="panel">
+      <div class="ptitle"><div class="picon g">🚘</div>Park a Vehicle</div>
+      <label class="flabel" for="vtype">Vehicle Type</label>
+      <select class="fselect" id="vtype">
+        <option value="Car">🚗 Car</option>
+        <option value="Bike">🏍️ Bike</option>
+      </select>
+      <label class="flabel" for="vplate">License Plate</label>
+      <input class="finput" type="text" id="vplate" placeholder="e.g. MH12AB1234" maxlength="20"/>
+      <button class="btn btn-p" id="pbtn" onclick="parkVehicle()">⚡ Park Vehicle</button>
+      <div class="result" id="pr"></div>
+    </div>
+    <div class="panel">
+      <div class="ptitle"><div class="picon r">🗑️</div>Remove a Vehicle</div>
+      <label class="flabel" for="rplate">License Plate</label>
+      <input class="finput" type="text" id="rplate" placeholder="e.g. MH12AB1234" maxlength="20"/>
+      <button class="btn btn-r" id="rbtn" onclick="removeVehicle()">✕ Remove Vehicle</button>
+      <div class="result" id="rr"></div>
+    </div>
+  </div>
+
+  <!-- Lot -->
+  <div class="lot">
+    <div class="lot-hdr">
+      <div class="lot-title">▸ LIVE PARKING FEED</div>
+      <div class="legend">
+        <div class="li"><div class="dot df"></div>Free</div>
+        <div class="li"><div class="dot do"></div>Occupied</div>
+      </div>
+    </div>
+    <div class="grid" id="grid"></div>
+  </div>
+</div>
+
+<script>
+/* ════════════ STATE ════════════ */
+let spots=[], total=0, simOn=false, simTimer=null;
+const fakePlates=['MH12AB1234','DL05CD5678','KA01EF9101','TN22GH1121','GJ04IJ3141','UP32KL5161','RJ14MN7181','HR26OP2031','WB19QR4051','PB10ST6071','AP03UV8091','MP07WX0111'];
+const fakeTypes=['Car','Car','Car','Bike','Car','Bike'];
+
+/* ════════════ INTRO (GSAP) ════════════ */
+window.addEventListener('load',()=>{
+  const tl = gsap.timeline({onComplete: showSetup});
+  // Cars race across
+  tl.set('#ic1',{x:-60}).to('#ic1',{opacity:1,x:window.innerWidth+100,duration:2,ease:'power1.inOut'},0.2)
+    .set('#ic2',{x:-60}).to('#ic2',{opacity:1,x:window.innerWidth+100,duration:2.5,ease:'power1.inOut'},0)
+    .set('#ic3',{x:-60}).to('#ic3',{opacity:1,x:window.innerWidth+100,duration:1.8,ease:'power1.inOut'},0.5)
+  // Title
+    .fromTo('#ilogo',{opacity:0,y:24},{opacity:1,y:0,duration:.7,ease:'power3.out'},0.7)
+    .fromTo('#isub',{opacity:0,y:10},{opacity:1,y:0,duration:.5,ease:'power2.out'},1.2)
+    .to('#ibw',{opacity:1,duration:.3},1.6)
+    .to('#ibar',{width:'100%',duration:1.3,ease:'power1.inOut'},1.7)
+  // Fade out
+    .to('#intro',{opacity:0,duration:.6,ease:'power2.in'},3.3)
+    .set('#intro',{display:'none'},3.9);
+});
+
+function showSetup(){
+  const s=document.getElementById('setup');
+  s.style.display='flex';
+  gsap.fromTo('#sbox',{opacity:0,scale:.82,y:30},{opacity:1,scale:1,y:0,duration:.6,ease:'back.out(1.5)'});
+  document.getElementById('snum').focus();
+}
+
+/* ════════════ INIT ════════════ */
+function initLot(){
+  const n=parseInt(document.getElementById('snum').value,10);
+  if(!n||n<1||n>50){
+    gsap.to('#snum',{x:-8,duration:.05,yoyo:true,repeat:7,ease:'none',onComplete:()=>gsap.set('#snum',{x:0})});
+    return;
+  }
+  total=n; spots=[];
+  for(let i=1;i<=n;i++) spots.push({id:i,occ:false,plate:'',type:''});
+  gsap.to('#setup',{opacity:0,duration:.4,onComplete:()=>document.getElementById('setup').style.display='none'});
+  gsap.fromTo('#app',{opacity:0,y:28},{opacity:1,y:0,duration:.75,ease:'power3.out'});
+  updateStats(); renderGrid(true);
+  toast(`🅿️ Lot ready — ${n} spots initialized!`,'info');
+}
+
+/* ════════════ RENDER GRID ════════════ */
+function renderGrid(anim=false, flashId=null, flashType=null){
+  const g=document.getElementById('grid'); g.innerHTML='';
+  spots.forEach(s=>{
+    const el=document.createElement('div');
+    el.className='spot '+(s.occ?'occ':'free');
+    el.id='sp'+s.id;
+    const ic=s.occ?(s.type==='Bike'?'🏍️':'🚗'):'🅿️';
+    el.innerHTML=`<div class="snum">Spot ${s.id}</div><span class="semoji">${ic}</span><div class="sstatus">${s.occ?'Occupied':'Free'}</div>${s.plate?`<div class="splate">${s.plate}</div>`:''}`;
+    g.appendChild(el);
+    if(s.id===flashId){
+      setTimeout(()=>{el.classList.add(flashType==='p'?'fg':'fr');setTimeout(()=>el.classList.remove('fg','fr'),700);},80);
+    }
+    if(anim) gsap.fromTo(el,{opacity:0,scale:.65},{opacity:1,scale:1,duration:.38,delay:s.id*.045,ease:'back.out(1.4)'});
+  });
+}
+
+/* ════════════ COUNTERS ════════════ */
+function updateStats(){
+  const o=spots.filter(s=>s.occ).length, f=total-o;
+  countTo('st',total); countTo('sf',f); countTo('so',o);
+  document.getElementById('bf').style.width=(total?f/total*100:100)+'%';
+  document.getElementById('bo').style.width=(total?o/total*100:0)+'%';
+}
+function countTo(id,target){
+  const el=document.getElementById(id);
+  const from={v:parseInt(el.textContent)||0};
+  gsap.to(from,{v:target,duration:.8,ease:'power2.out',onUpdate:()=>el.textContent=Math.round(from.v)});
+}
+
+/* ════════════ FLYING CAR ════════════ */
+function flyTo(fromEl,toEl,icon,cb){
+  const car=document.getElementById('fcar');
+  car.textContent=icon; car.style.display='block';
+  const fr=fromEl.getBoundingClientRect(), tr=toEl.getBoundingClientRect();
+  const sx=fr.left+fr.width/2, sy=fr.top+fr.height/2;
+  const ex=tr.left+tr.width/2, ey=tr.top+tr.height/2;
+  gsap.set(car,{x:sx,y:sy,scale:1.1,opacity:1});
+  const tl=gsap.timeline({onComplete:()=>{car.style.display='none';gsap.set(car,{scale:1,opacity:1});if(cb)cb()}});
+  tl.to(car,{x:(sx+ex)/2,y:Math.min(sy,ey)-90,duration:.4,ease:'power2.out'})
+    .to(car,{x:ex,y:ey,scale:.7,duration:.4,ease:'power2.in'})
+    .to(car,{scale:0,opacity:0,duration:.2});
+}
+function flyOut(fromEl,icon,cb){
+  const car=document.getElementById('fcar');
+  car.textContent=icon; car.style.display='block';
+  const r=fromEl.getBoundingClientRect();
+  gsap.set(car,{x:r.left+r.width/2,y:r.top+r.height/2,scale:1.1,opacity:1});
+  gsap.to(car,{x:window.innerWidth+80,y:r.top-20,scale:.5,opacity:0,duration:.7,ease:'power2.in',onComplete:()=>{car.style.display='none';gsap.set(car,{scale:1,opacity:1});if(cb)cb()}});
+}
+
+/* ════════════ PARK ════════════ */
+function parkVehicle(){
+  const type=document.getElementById('vtype').value;
+  const plate=document.getElementById('vplate').value.trim().toUpperCase();
+  const re=document.getElementById('pr');
+  if(!plate){showRes(re,'⚠️ Enter a license plate','err');shake('#vplate');return;}
+  if(spots.some(s=>s.occ&&s.plate===plate)){showRes(re,`⚠️ ${plate} is already parked!`,'err');return;}
+  const free=spots.find(s=>!s.occ);
+  if(!free){showRes(re,'🚫 Parking Full! No spots left.','err');toast('🚫 Parking Full!','err');gsap.to('#app .stats',{x:-5,duration:.05,yoyo:true,repeat:7,ease:'none',onComplete:()=>gsap.set('#app .stats',{x:0})});return;}
+  free.occ=true;free.plate=plate;free.type=type;
+  document.getElementById('vplate').value='';
+  gsap.to('#pbtn',{scale:.94,duration:.1,yoyo:true,repeat:1});
+  renderGrid(false,free.id,'p');
+  const toEl=document.getElementById('sp'+free.id);
+  const fromEl=document.getElementById('pbtn');
+  const icon=type==='Bike'?'🏍️':'🚗';
+  if(toEl&&fromEl) flyTo(fromEl,toEl,icon,updateStats); else updateStats();
+  showRes(re,`✅ ${type} [${plate}] → Spot ${free.id}`,'ok');
+  toast(`✅ ${type} ${plate} parked at Spot ${free.id}`,'ok');
+}
+
+/* ════════════ REMOVE ════════════ */
+function removeVehicle(){
+  const plate=document.getElementById('rplate').value.trim().toUpperCase();
+  const re=document.getElementById('rr');
+  if(!plate){showRes(re,'⚠️ Enter a license plate','err');shake('#rplate');return;}
+  const spot=spots.find(s=>s.occ&&s.plate===plate);
+  if(!spot){showRes(re,`❌ Vehicle [${plate}] not found`,'err');toast(`❌ ${plate} not found`,'err');return;}
+  const {id,type}=spot;
+  spot.occ=false;spot.plate='';spot.type='';
+  document.getElementById('rplate').value='';
+  gsap.to('#rbtn',{scale:.94,duration:.1,yoyo:true,repeat:1});
+  const fromEl=document.getElementById('sp'+id);
+  const icon=type==='Bike'?'🏍️':'🚗';
+  if(fromEl) flyOut(fromEl,icon,()=>{renderGrid(false,id,'r');updateStats();}); else{renderGrid(false,id,'r');updateStats();}
+  showRes(re,`✅ Vehicle [${plate}] exited Spot ${id}`,'ok');
+  toast(`🚀 ${plate} exited Spot ${id}`,'ok');
+}
+
+/* ════════════ HELPERS ════════════ */
+function showRes(el,msg,type){
+  el.textContent=msg;el.className='result show '+type;
+  clearTimeout(el._t);el._t=setTimeout(()=>el.className='result',4000);
+}
+function shake(sel){
+  gsap.to(sel,{x:-8,duration:.05,yoyo:true,repeat:7,ease:'none',onComplete:()=>gsap.set(sel,{x:0})});
+}
+function toast(msg,type='info'){
+  const c=document.getElementById('toasts');
+  const t=document.createElement('div');t.className='toast '+type;t.textContent=msg;
+  c.appendChild(t);
+  setTimeout(()=>{t.classList.add('bye');setTimeout(()=>t.remove(),380);},3200);
+}
+
+/* ════════════ SIMULATION ════════════ */
+function toggleSim(){
+  simOn=!simOn;
+  const btn=document.getElementById('sim-btn');
+  btn.classList.toggle('on',simOn);
+  document.getElementById('slabel').textContent=simOn?'Simulation ON':'Live Simulation';
+  if(simOn){toast('🤖 Simulation started — watch the lot fill up!','info');runSim();simTimer=setInterval(runSim,2000);}
+  else{clearInterval(simTimer);toast('⏹ Simulation stopped','info');}
+}
+function runSim(){
+  if(!spots.length)return;
+  const occ=spots.filter(s=>s.occ), free=spots.filter(s=>!s.occ);
+  const doP=Math.random()<.58&&free.length>0;
+  if(doP&&free.length){
+    const avail=fakePlates.filter(p=>!spots.some(s=>s.plate===p));
+    if(!avail.length)return;
+    const plate=avail[Math.floor(Math.random()*avail.length)];
+    const type=fakeTypes[Math.floor(Math.random()*fakeTypes.length)];
+    const s=free[0];s.occ=true;s.plate=plate;s.type=type;
+    renderGrid(false,s.id,'p');updateStats();
+    toast(`🤖 ${type} ${plate} → Spot ${s.id}`,'info');
+  } else if(occ.length){
+    const s=occ[Math.floor(Math.random()*occ.length)];
+    const {id,plate}=s;s.occ=false;s.plate='';s.type='';
+    renderGrid(false,id,'r');updateStats();
+    toast(`🤖 ${plate} exited`,'info');
+  }
+}
+
+/* ════════════ KEYBOARD ════════════ */
+document.addEventListener('keydown',e=>{
+  if(e.target.tagName==='INPUT'||e.target.tagName==='SELECT')return;
+  if(e.key==='s'||e.key==='S')toggleSim();
+});
+document.addEventListener('DOMContentLoaded',()=>{
+  document.getElementById('vplate')?.addEventListener('keydown',e=>{if(e.key==='Enter')parkVehicle()});
+  document.getElementById('rplate')?.addEventListener('keydown',e=>{if(e.key==='Enter')removeVehicle()});
+  document.getElementById('snum')?.addEventListener('keydown',e=>{if(e.key==='Enter')initLot()});
+});
+</script>
+</body>
+</html>

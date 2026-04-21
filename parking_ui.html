@@ -1,0 +1,973 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Parking Lot Management System</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet" />
+
+  <style>
+    /* =============================================
+       DESIGN TOKENS & RESET
+    ============================================= */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    :root {
+      --bg-dark: #000000;
+      --bg-card: #0a0a0a;
+      --bg-card2: #111111;
+      --border: #333333;
+      --accent: #ccff00;
+      --accent-light: #e6ff66;
+      --green: #ccff00;
+      --green-bg: rgba(204, 255, 0, 0.12);
+      --red: #ff3333;
+      --red-bg: rgba(255, 51, 51, 0.12);
+      --yellow: #e6ff66;
+      --text: #ffffff;
+      --text-muted: #666666;
+      --radius: 14px;
+      --radius-sm: 8px;
+      --shadow: 0 8px 32px rgba(0, 0, 0, 0.6);
+    }
+
+    body {
+      font-family: 'Inter', sans-serif;
+      background: var(--bg-dark);
+      color: var(--text);
+      min-height: 100vh;
+      padding: 24px 16px 60px;
+    }
+
+    /* =============================================
+       HEADER
+    ============================================= */
+    header {
+      text-align: center;
+      margin-bottom: 36px;
+    }
+
+    header .badge {
+      display: inline-block;
+      background: rgba(108, 99, 255, 0.18);
+      color: var(--accent-light);
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      padding: 4px 14px;
+      border-radius: 999px;
+      border: 1px solid rgba(108, 99, 255, 0.25);
+      margin-bottom: 14px;
+    }
+
+    header h1 {
+      font-size: clamp(24px, 5vw, 40px);
+      font-weight: 800;
+      background: linear-gradient(135deg, #fff 30%, var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1.2;
+    }
+
+    header p {
+      color: var(--text-muted);
+      font-size: 14px;
+      margin-top: 8px;
+    }
+
+    /* =============================================
+       LAYOUT WRAPPER
+    ============================================= */
+    .container {
+      max-width: 1100px;
+      margin: 0 auto;
+    }
+
+    /* =============================================
+       STAT CARDS (Dashboard)
+    ============================================= */
+    .stats-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .stat-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 24px 22px;
+      display: flex;
+      align-items: center;
+      gap: 18px;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .stat-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow);
+    }
+
+    .stat-icon {
+      width: 52px;
+      height: 52px;
+      border-radius: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 22px;
+      flex-shrink: 0;
+    }
+
+    .stat-icon.purple {
+      background: rgba(108, 99, 255, 0.15);
+    }
+
+    .stat-icon.green {
+      background: var(--green-bg);
+    }
+
+    .stat-icon.red {
+      background: var(--red-bg);
+    }
+
+    .stat-info .label {
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .stat-info .value {
+      font-size: 32px;
+      font-weight: 800;
+      line-height: 1.1;
+      margin-top: 2px;
+    }
+
+    .stat-info .value.purple {
+      color: var(--accent-light);
+    }
+
+    .stat-info .value.green {
+      color: var(--green);
+    }
+
+    .stat-info .value.red {
+      color: var(--red);
+    }
+
+    /* =============================================
+       TWO-COLUMN ACTION PANEL
+    ============================================= */
+    .actions-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 16px;
+      margin-bottom: 28px;
+    }
+
+    .panel {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px 24px;
+    }
+
+    .panel h2 {
+      font-size: 16px;
+      font-weight: 700;
+      margin-bottom: 20px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .panel h2 .icon {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 16px;
+    }
+
+    .panel h2 .icon.green-i {
+      background: var(--green-bg);
+    }
+
+    .panel h2 .icon.red-i {
+      background: var(--red-bg);
+    }
+
+    /* Form elements */
+    .form-group {
+      margin-bottom: 14px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.7px;
+      margin-bottom: 6px;
+    }
+
+    .form-group select,
+    .form-group input[type="text"] {
+      width: 100%;
+      padding: 11px 14px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 14px;
+      font-family: 'Inter', sans-serif;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-group select:focus,
+    .form-group input[type="text"]:focus {
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(108, 99, 255, 0.15);
+    }
+
+    .form-group select option {
+      background: #1a1d27;
+    }
+
+    /* Buttons */
+    .btn {
+      width: 100%;
+      padding: 12px;
+      border: none;
+      border-radius: var(--radius-sm);
+      font-size: 14px;
+      font-weight: 700;
+      font-family: 'Inter', sans-serif;
+      cursor: pointer;
+      transition: all 0.2s;
+      letter-spacing: 0.3px;
+      margin-top: 4px;
+    }
+
+    .btn-park {
+      background: var(--green);
+      color: #000;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .btn-park:hover {
+      filter: brightness(1.2);
+      transform: translateY(-1px);
+    }
+
+    .btn-park:active {
+      transform: translateY(0);
+    }
+
+    .btn-remove {
+      background: var(--red);
+      color: #000;
+      text-transform: uppercase;
+      font-weight: 800;
+    }
+
+    .btn-remove:hover {
+      filter: brightness(1.2);
+      transform: translateY(-1px);
+    }
+
+    .btn-remove:active {
+      transform: translateY(0);
+    }
+
+    /* Result message under button */
+    .result-msg {
+      margin-top: 12px;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 13px;
+      font-weight: 500;
+      display: none;
+      animation: fadeIn 0.3s ease;
+    }
+
+    .result-msg.success {
+      background: var(--green-bg);
+      color: var(--green);
+      border: 1px solid rgba(34, 197, 94, 0.2);
+    }
+
+    .result-msg.error {
+      background: var(--red-bg);
+      color: var(--red);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .result-msg.show {
+      display: block;
+    }
+
+    /* =============================================
+       PARKING LOT GRID VIEW
+    ============================================= */
+    .lot-section {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 26px 24px;
+      margin-bottom: 28px;
+    }
+
+    .lot-section-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 22px;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .lot-section-header h2 {
+      font-size: 16px;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .legend {
+      display: flex;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 12px;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    .legend-dot.free {
+      background: var(--green);
+    }
+
+    .legend-dot.occupied {
+      background: var(--red);
+    }
+
+    /* The spot grid */
+    .spots-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+      gap: 12px;
+    }
+
+    .spot-card {
+      border-radius: 12px;
+      padding: 16px 12px;
+      text-align: center;
+      border: 2px solid transparent;
+      cursor: default;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.35s, background 0.35s;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .spot-card::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .spot-card:hover {
+      transform: translateY(-2px);
+    }
+
+    /* Free spot */
+    .spot-card.free {
+      background: var(--green-bg);
+      border-color: rgba(34, 197, 94, 0.25);
+    }
+
+    .spot-card.free:hover {
+      box-shadow: 0 4px 20px rgba(34, 197, 94, 0.2);
+    }
+
+    /* Occupied spot */
+    .spot-card.occupied {
+      background: var(--red-bg);
+      border-color: rgba(239, 68, 68, 0.25);
+    }
+
+    .spot-card.occupied:hover {
+      box-shadow: 0 4px 20px rgba(239, 68, 68, 0.2);
+    }
+
+    /* Pulse animation when a spot just changed */
+    @keyframes pulse-green {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(34, 197, 94, 0.5)
+      }
+
+      50% {
+        box-shadow: 0 0 0 10px rgba(34, 197, 94, 0)
+      }
+    }
+
+    @keyframes pulse-red {
+
+      0%,
+      100% {
+        box-shadow: 0 0 0 0 rgba(239, 68, 68, 0.5)
+      }
+
+      50% {
+        box-shadow: 0 0 0 10px rgba(239, 68, 68, 0)
+      }
+    }
+
+    .spot-card.anim-free {
+      animation: pulse-green 0.6s ease;
+    }
+
+    .spot-card.anim-occupied {
+      animation: pulse-red 0.6s ease;
+    }
+
+    .spot-number {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      color: var(--text-muted);
+      margin-bottom: 8px;
+    }
+
+    .spot-icon {
+      font-size: 26px;
+      margin-bottom: 8px;
+      line-height: 1;
+    }
+
+    .spot-status {
+      font-size: 11px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .spot-card.free .spot-status {
+      color: var(--green);
+    }
+
+    .spot-card.occupied .spot-status {
+      color: var(--red);
+    }
+
+    .spot-plate {
+      font-size: 11px;
+      color: var(--text-muted);
+      margin-top: 4px;
+      font-weight: 500;
+      word-break: break-all;
+    }
+
+    /* =============================================
+       TOAST NOTIFICATION
+    ============================================= */
+    #toast-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      z-index: 9999;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .toast {
+      padding: 13px 20px;
+      border-radius: 10px;
+      font-size: 13px;
+      font-weight: 600;
+      color: #fff;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideIn 0.35s cubic-bezier(0.34, 1.56, 0.64, 1);
+      max-width: 320px;
+    }
+
+    .toast.success {
+      background: linear-gradient(135deg, #16a34a, #15803d);
+    }
+
+    .toast.error {
+      background: linear-gradient(135deg, #dc2626, #b91c1c);
+    }
+
+    .toast.fade-out {
+      animation: fadeOut 0.35s ease forwards;
+    }
+
+    @keyframes slideIn {
+      from {
+        opacity: 0;
+        transform: translateX(60px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0)
+      }
+    }
+
+    @keyframes fadeOut {
+      from {
+        opacity: 1;
+        transform: translateX(0)
+      }
+
+      to {
+        opacity: 0;
+        transform: translateX(60px)
+      }
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-6px)
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0)
+      }
+    }
+
+    /* =============================================
+       SETUP OVERLAY (initial lot size input)
+    ============================================= */
+    #setup-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(10, 11, 18, 0.95);
+      backdrop-filter: blur(8px);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 999;
+    }
+
+    .setup-box {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 40px 36px;
+      width: min(420px, 90vw);
+      text-align: center;
+      box-shadow: var(--shadow);
+    }
+
+    .setup-box .emoji {
+      font-size: 48px;
+      margin-bottom: 16px;
+    }
+
+    .setup-box h2 {
+      font-size: 22px;
+      font-weight: 800;
+      margin-bottom: 6px;
+      background: linear-gradient(135deg, #fff, var(--accent-light));
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .setup-box p {
+      color: var(--text-muted);
+      font-size: 13px;
+      margin-bottom: 26px;
+    }
+
+    .setup-box input[type="number"] {
+      width: 100%;
+      padding: 14px;
+      background: var(--bg-dark);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-size: 20px;
+      font-family: 'Inter', sans-serif;
+      text-align: center;
+      font-weight: 700;
+      outline: none;
+      margin-bottom: 18px;
+      transition: border-color 0.2s;
+    }
+
+    .setup-box input[type="number"]:focus {
+      border-color: var(--accent);
+    }
+
+    .setup-box input[type="number"]::-webkit-inner-spin-button {
+      display: none;
+    }
+
+    .btn-setup {
+      width: 100%;
+      padding: 14px;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: var(--accent);
+      color: #000;
+      font-size: 15px;
+      font-weight: 800;
+      font-family: 'Inter', sans-serif;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: filter 0.2s, transform 0.2s;
+    }
+
+    .btn-setup:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px);
+    }
+
+    /* =============================================
+       RESPONSIVE
+    ============================================= */
+    @media (max-width: 600px) {
+      .spots-grid {
+        grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+      }
+
+      .actions-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* Scrollbar */
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg-dark);
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--bg-card2);
+      border-radius: 4px;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- =============================================
+       TOAST CONTAINER
+  ============================================= -->
+  <div id="toast-container"></div>
+
+  <!-- =============================================
+       SETUP OVERLAY — asks how many spots
+  ============================================= -->
+  <div id="setup-overlay">
+    <div class="setup-box">
+      <div class="emoji">🅿️</div>
+      <h2>Welcome!</h2>
+      <p>How many parking spots does your lot have?</p>
+      <input type="number" id="setup-spots" value="10" min="1" max="50" />
+      <button class="btn-setup" onclick="initLot()">Create Parking Lot →</button>
+    </div>
+  </div>
+
+  <!-- =============================================
+       MAIN APP
+  ============================================= -->
+  <div class="container">
+
+    <!-- HEADER -->
+    <header>
+      <div class="badge">🅿️ Management System</div>
+      <h1>Parking Lot Manager</h1>
+      <p>Real-time parking spot tracking and vehicle management</p>
+    </header>
+
+    <!-- DASHBOARD STAT CARDS -->
+    <section class="stats-grid" aria-label="Dashboard statistics">
+      <div class="stat-card">
+        <div class="stat-icon purple">🅿️</div>
+        <div class="stat-info">
+          <div class="label">Total Spots</div>
+          <div class="value purple" id="stat-total">—</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon green">✅</div>
+        <div class="stat-info">
+          <div class="label">Available</div>
+          <div class="value green" id="stat-free">—</div>
+        </div>
+      </div>
+      <div class="stat-card">
+        <div class="stat-icon red">🚗</div>
+        <div class="stat-info">
+          <div class="label">Occupied</div>
+          <div class="value red" id="stat-occupied">—</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ACTIONS: PARK + REMOVE -->
+    <section class="actions-grid" aria-label="Park and remove vehicles">
+
+      <!-- PARK VEHICLE -->
+      <div class="panel">
+        <h2>
+          <span class="icon green-i">🚘</span>
+          Park a Vehicle
+        </h2>
+
+        <div class="form-group">
+          <label for="vehicle-type">Vehicle Type</label>
+          <select id="vehicle-type">
+            <option value="Car">🚗 Car</option>
+            <option value="Bike">🏍️ Bike</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label for="vehicle-plate">Vehicle Number (Plate)</label>
+          <input type="text" id="vehicle-plate" placeholder="e.g. MH12AB1234" maxlength="20" />
+        </div>
+
+        <button class="btn btn-park" id="btn-park" onclick="parkVehicle()">
+          + Park Vehicle
+        </button>
+
+        <!-- Result message shown after action -->
+        <div class="result-msg" id="park-result"></div>
+      </div>
+
+      <!-- REMOVE VEHICLE -->
+      <div class="panel">
+        <h2>
+          <span class="icon red-i">🗑️</span>
+          Remove a Vehicle
+        </h2>
+
+        <div class="form-group">
+          <label for="remove-plate">Vehicle Number (Plate)</label>
+          <input type="text" id="remove-plate" placeholder="e.g. MH12AB1234" maxlength="20" />
+        </div>
+
+        <button class="btn btn-remove" id="btn-remove" onclick="removeVehicle()">
+          ✕ Remove Vehicle
+        </button>
+
+        <!-- Result message shown after action -->
+        <div class="result-msg" id="remove-result"></div>
+      </div>
+
+    </section>
+
+    <!-- PARKING LOT VISUAL GRID -->
+    <section class="lot-section" aria-label="Parking lot spot view">
+      <div class="lot-section-header">
+        <h2>🅿️ Parking Lot View</h2>
+        <div class="legend">
+          <div class="legend-item">
+            <div class="legend-dot free"></div> Free
+          </div>
+          <div class="legend-item">
+            <div class="legend-dot occupied"></div> Occupied
+          </div>
+        </div>
+      </div>
+      <!-- Spots rendered here by JS -->
+      <div class="spots-grid" id="spots-grid"></div>
+    </section>
+
+  </div><!-- /container -->
+
+
+  <!-- =============================================
+       JAVASCRIPT — Parking Lot Logic
+  ============================================= -->
+  <script>
+    let totalSpots = 0;
+    let spots = [];
+    let activeLot = null;
+    let syncInterval = null;
+
+    window.onload = () => {
+      syncInterval = setInterval(fetchLotDB, 2000);
+      fetchLotDB();
+    };
+
+    async function fetchLotDB() {
+      let lotId = sessionStorage.getItem('activeLotId');
+      let userId = sessionStorage.getItem('activeIdentity');
+      
+      const fetchId = lotId || userId;
+      if (!fetchId) {
+          document.getElementById('setup-overlay').style.display = 'flex';
+          return;
+      }
+
+      try {
+          const res = await fetch(`http://localhost:3000/api/parking/${fetchId}`);
+          if (!res.ok) {
+              document.getElementById('setup-overlay').style.display = 'flex';
+              return;
+          }
+          const lot = await res.json();
+          activeLot = lot;
+          document.getElementById('setup-overlay').style.display = 'none';
+          
+          if (!sessionStorage.getItem('activeLotId')) sessionStorage.setItem('activeLotId', lot.id);
+          renderState();
+      } catch (e) { console.warn(e); }
+    }
+
+    function renderState() {
+      if(!activeLot) return;
+      totalSpots = activeLot.total_slots;
+      spots = [];
+      for (let i = 1; i <= totalSpots; i++) {
+        spots.push({ id: i, occupied: false, plate: '', type: '' });
+      }
+
+      (activeLot.bookings || []).forEach((b) => {
+         const free = spots.find(s => !s.occupied);
+         if(free) { free.occupied = true; free.plate = b.plate; free.type = b.type || 'Car'; }
+      });
+
+      updateStats();
+      renderSpots();
+    }
+
+    // Since Auth API creates the lot immediately, initLot shouldn't normally be needed unless manual
+    function initLot() {
+       alert("Lots are initialized exclusively through the Database Owner Signup Protocol.");
+    }
+
+    async function parkVehicle() {
+      if(!activeLot) return;
+      const type = document.getElementById('vehicle-type').value.trim();
+      const plate = document.getElementById('vehicle-plate').value.trim().toUpperCase();
+      const resultEl = document.getElementById('park-result');
+
+      if (!plate) return;
+
+      try {
+          const res = await fetch('http://localhost:3000/api/bookings', {
+             method: 'POST', headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ user_id: 'OWNER_MANUAL', parking_id: activeLot.id, time_duration: 1, plate: plate, type: type })
+          });
+          const data = await res.json();
+          if(!res.ok) { showResult(resultEl, `⚠️ ${data.error}`, 'error'); return; }
+
+          document.getElementById('vehicle-plate').value = '';
+          showResult(resultEl, `✅ DB UPDATED. [${plate}] injected.`, 'success');
+          showToast(`✅ ${plate} Assigned`, 'success');
+          fetchLotDB();
+      } catch (e) { showResult(resultEl, 'DB ERR', 'error'); }
+    }
+
+    async function removeVehicle() {
+      if(!activeLot) return;
+      const plate = document.getElementById('remove-plate').value.trim().toUpperCase();
+      const resultEl = document.getElementById('remove-result');
+      if (!plate) return;
+
+      try {
+          const res = await fetch('http://localhost:3000/api/bookings/remove', {
+             method: 'POST', headers: { 'Content-Type': 'application/json' },
+             body: JSON.stringify({ parking_id: activeLot.id, plate: plate })
+          });
+          const data = await res.json();
+          if(!res.ok) { showResult(resultEl, `❌ ${data.error}`, 'error'); return; }
+
+          document.getElementById('remove-plate').value = '';
+          showResult(resultEl, `✅ DB UPDATED. [${plate}] cleared.`, 'success');
+          showToast(`✅ ${plate} Cleared`, 'success');
+          fetchLotDB();
+      } catch (e) { showResult(resultEl, 'DB ERR', 'error'); }
+    }
+
+    function updateStats() {
+      document.getElementById('stat-total').textContent = activeLot.total_slots;
+      document.getElementById('stat-free').textContent = activeLot.available_slots;
+      document.getElementById('stat-occupied').textContent = activeLot.total_slots - activeLot.available_slots;
+    }
+
+    function renderSpots() {
+      const grid = document.getElementById('spots-grid');
+      grid.innerHTML = ''; 
+      spots.forEach(spot => {
+        const card = document.createElement('div');
+        card.className = 'spot-card ' + (spot.occupied ? 'occupied' : 'free');
+        const icon = spot.occupied ? (spot.type === 'Bike' ? '🏍️' : '🚗') : '🅿️';
+        card.innerHTML = `
+          <div class="spot-number">Spot ${spot.id}</div>
+          <div class="spot-icon">${icon}</div>
+          <div class="spot-status">${spot.occupied ? 'Occupied' : 'Free'}</div>
+          ${spot.plate ? `<div class="spot-plate">${spot.plate}</div>` : ''}
+        `;
+        grid.appendChild(card);
+      });
+    }
+
+    function showResult(el, msg, type) {
+      el.textContent = msg; el.className = 'result-msg show ' + type;
+      clearTimeout(el._timer); el._timer = setTimeout(() => el.className = 'result-msg', 4000);
+    }
+    function showToast(msg, type) {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = 'toast ' + type; toast.textContent = msg;
+      container.appendChild(toast);
+      setTimeout(() => { toast.classList.add('fade-out'); setTimeout(() => toast.remove(), 350); }, 3000);
+    }
+  </script>
+
+</body>
+
+</html>
