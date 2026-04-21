@@ -17,35 +17,19 @@ public:
     cout << "  Type: " << type << " | Plate: " << licensePlate << endl;
   }
 };
-
-// ============================================================
-// DERIVED CLASS: Car
-// Inherits from Vehicle, sets type to "Car"
-// ============================================================
 class Car : public Vehicle {
 public:
-  // Constructor - calls the parent Vehicle constructor
   Car(string plate) : Vehicle(plate, "Car") {
     // nothing extra needed
   }
 };
-
-// ============================================================
-// DERIVED CLASS: Bike
-// Inherits from Vehicle, sets type to "Bike"
-// ============================================================
 class Bike : public Vehicle {
 public:
-  // Constructor - calls the parent Vehicle constructor
   Bike(string plate) : Vehicle(plate, "Bike") {
     // nothing extra needed
   }
 };
 
-// ============================================================
-// CLASS: ParkingSpot
-// Represents a single parking spot in the lot
-// ============================================================
 class ParkingSpot {
 public:
   int spotNumber;      // the spot ID (1, 2, 3, ...)
@@ -81,11 +65,6 @@ public:
     }
   }
 };
-
-// ============================================================
-// CLASS: ParkingLot
-// Manages all the parking spots together
-// ============================================================
 class ParkingLot {
 public:
   vector<ParkingSpot> spots; // list of all parking spots
@@ -114,14 +93,9 @@ public:
         return; // stop looking, we found a spot
       }
     }
-
-    // If we get here, all spots were full
     cout << "  Parking Full! Cannot park " << v.licensePlate << "." << endl;
   }
-
-  // Remove a vehicle using its license plate
   void removeVehicle(string plate) {
-    // Go through each spot to find the vehicle
     for (int i = 0; i < spots.size(); i++) {
       if (spots[i].vehiclePlate == plate) { // found the vehicle
         spots[i].removeVehicle();           // free the spot
@@ -130,12 +104,9 @@ public:
         return; // done
       }
     }
-
-    // If we get here, the vehicle was not found
     cout << "  Vehicle [" << plate << "] not found in the parking lot." << endl;
   }
 
-  // Show all spots and their current status
   void showAllSpots() {
     cout << "  --- Parking Lot Status ---" << endl;
     for (int i = 0; i < spots.size(); i++) {
@@ -164,10 +135,6 @@ public:
     cout << "  ------------------------------" << endl;
   }
 };
-
-// ============================================================
-// MAIN FUNCTION - Interactive menu-driven program
-// ============================================================
 int main() {
   cout << "========================================" << endl;
   cout << "   Parking Lot Management System" << endl;
@@ -221,8 +188,8 @@ int main() {
         Car c(plate);       // create a Car object
         lot.parkVehicle(c); // park it using existing function
       } else if (vehicleType == "Bike" || vehicleType == "bike") {
-        Bike b(plate);       // create a Bike object
-        lot.parkVehicle(b);  // park it using existing function
+        Bike b(plate);      // create a Bike object
+        lot.parkVehicle(b); // park it using existing function
       } else {
         // If user typed something other than Car or Bike
         cout << "  Invalid vehicle type! Please enter Car or Bike." << endl;
@@ -267,7 +234,8 @@ int main() {
 
     // --- Invalid choice ---
     else {
-      cout << "  Invalid choice! Please enter a number between 1 and 5." << endl;
+      cout << "  Invalid choice! Please enter a number between 1 and 5."
+           << endl;
       cout << endl;
     }
 
@@ -275,4 +243,3 @@ int main() {
 
   return 0; // program finished successfully
 }
-

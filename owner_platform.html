@@ -31,7 +31,7 @@
         .view.active { display: block; }
         
         /* AUTH VIEW */
-        #view-auth.active { display: flex; align-items: center; justify-content: center; }
+        #view-auth { display: flex; align-items: center; justify-content: center; }
         .auth-container { background: var(--surface); border: 1px solid var(--border); padding: 40px; border-radius: 16px; width: 100%; max-width: 400px; }
         .auth-header { text-align: center; margin-bottom: 30px; }
         .auth-header h1 { font-size: 2rem; color: var(--accent); text-transform: uppercase; letter-spacing: -1px; }
@@ -43,8 +43,8 @@
 
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px; text-transform: uppercase; }
-        .input-group input, .input-group select { width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-family: var(--font-mono); appearance:none; }
-        .input-group input:focus, .input-group select:focus { outline: none; border-color: var(--accent); }
+        .input-group input { width: 100%; padding: 12px 16px; background: var(--bg); border: 1px solid var(--border); color: var(--text); border-radius: 8px; font-family: var(--font-mono); }
+        .input-group input:focus { outline: none; border-color: var(--accent); }
 
         .btn-primary { width: 100%; padding: 14px; background: var(--accent); color: #000; font-weight: 800; font-size: 1.1rem; border-radius: 8px; margin-top: 10px; text-transform: uppercase; }
         .btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
@@ -58,8 +58,7 @@
         .btn-outline:hover { border-color: var(--accent); color: var(--accent); }
 
         .lot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(350px, 1fr)); gap: 20px; }
-        .lot-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; cursor: pointer; transition: 0.2s ease; }
-        .lot-card:hover { border-color: var(--accent); transform: scale(1.02); }
+        .lot-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 24px; position: relative; }
         .lot-card .delete-btn { position: absolute; top: 20px; right: 20px; background: var(--danger-dim); color: var(--danger); border: none; padding: 6px 10px; border-radius: 6px; font-size: 0.8rem; font-weight: bold; }
         .lot-card .delete-btn:hover { background: var(--danger); color: #fff; }
         .lot-card h3 { font-size: 1.5rem; margin-bottom: 5px; }
@@ -68,36 +67,17 @@
         .slot-display { display: flex; align-items: center; justify-content: space-between; background: var(--bg); padding: 15px; border-radius: 8px; border: 1px solid var(--border); margin-bottom: 15px; }
         .slot-stat .label { font-size: 0.7rem; color: var(--text-muted); text-transform: uppercase; margin-bottom: 3px; }
         .slot-stat .val { font-size: 1.8rem; font-family: var(--font-mono); font-weight: bold; color: var(--accent); }
+        .controls { display: flex; gap: 10px; }
+        .btn-ctrl { width: 40px; height: 40px; border-radius: 8px; background: var(--surface); border: 1px solid var(--border); color: var(--text); font-size: 1.2rem; font-weight: bold; display: flex; align-items: center; justify-content: center; }
+        .btn-ctrl:hover { border-color: var(--accent); color: var(--accent); }
+        .btn-ctrl.dec:hover { border-color: var(--danger); color: var(--danger); }
 
-        .progress-bar { width:100%; height:4px; background:var(--bg); border-radius:4px; overflow:hidden; }
-
-        /* DETAIL VIEW */
-        #view-parking-detail .detail-container { max-width: 900px; margin: 0 auto; }
-        .vehicle-table { width: 100%; border-collapse: collapse; margin-top: 20px; }
-        .vehicle-table th, .vehicle-table td { padding: 15px; text-align: left; border-bottom: 1px solid var(--border); }
-        .vehicle-table th { color: var(--text-muted); font-size: 0.85rem; text-transform: uppercase; letter-spacing: 1px; }
-        .vehicle-table tr:hover { background: var(--surface); }
-
+        /* ADD PARKING VIEW */
         #view-add .form-container { max-width: 500px; margin: 0 auto; background: var(--surface); padding: 40px; border: 1px solid var(--border); border-radius: 12px; }
 
         .toast { position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); background: var(--surface); border: 1px solid var(--accent); color: var(--accent); padding: 12px 24px; border-radius: 8px; font-weight: bold; z-index: 100; transition: 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275); }
         .toast.error { border-color: var(--danger); color: var(--danger); }
         .toast.show { bottom: 30px; }
-
-        /* RECEIPT UI */
-        #receipt-modal { display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:999; }
-        .receipt-card { background: #fff; color: #000; padding: 40px; border-radius: 8px; width: 100%; max-width: 400px; font-family: var(--font-mono); position: relative; }
-        .r-header { text-align: center; margin-bottom: 30px; border-bottom: 2px dashed #ccc; padding-bottom: 20px; }
-        .r-header h2 { text-transform: uppercase; font-weight: 900; letter-spacing: 2px; }
-        .r-row { display: flex; justify-content: space-between; margin-bottom: 15px; font-size: 0.9rem; }
-        .r-total { border-top: 2px dashed #ccc; padding-top: 20px; margin-top: 10px; font-size: 1.2rem; font-weight: 900; display: flex; justify-content: space-between; }
-        
-        @media print {
-            body * { visibility: hidden; }
-            #receipt-modal, #receipt-modal * { visibility: visible; }
-            #receipt-modal { position: absolute; left: 0; top: 0; background: transparent; }
-            .no-print { display: none !important; }
-        }
     </style>
 </head>
 <body>
@@ -117,6 +97,7 @@
                 <button id="toggle-signup" onclick="switchAuthMode('signup')">SIGN UP</button>
             </div>
 
+            <!-- Login Form -->
             <div id="form-login">
                 <div class="input-group">
                     <label>Email Address</label>
@@ -129,6 +110,7 @@
                 <button class="btn-primary" onclick="processLogin()">Access Terminal</button>
             </div>
 
+            <!-- Signup Form -->
             <div id="form-signup" style="display:none;">
                 <div class="input-group">
                     <label>Full Name</label>
@@ -159,51 +141,9 @@
                 <button class="btn-outline" style="border-color:var(--danger-dim); color:var(--danger);" onclick="processLogout()">Sign Out</button>
             </div>
         </div>
-        <div id="lot-container" class="lot-grid"></div>
-    </div>
-
-    <!-- PARKING DETAIL PAGE -->
-    <div id="view-parking-detail" class="view">
-        <div class="detail-container">
-            <div class="dash-header" style="margin-bottom: 20px;">
-                <div>
-                    <h1 id="det-name">Parking Terminal</h1>
-                    <p id="det-loc" style="color:var(--text-muted); margin-top:5px;">Location</p>
-                </div>
-                <div class="dash-actions">
-                    <button class="btn-outline" style="border-color:var(--accent); color:var(--accent);" onclick="openVehicleModal()">➕ ADD VEHICLE</button>
-                    <button class="btn-outline" onclick="loadView('view-dashboard')">← Return</button>
-                </div>
-            </div>
-
-            <div class="slot-display" style="padding: 25px; margin-bottom:30px;">
-                <div class="slot-stat">
-                    <div class="label">Total Slots</div>
-                    <div class="val" id="det-total" style="color:var(--text);">-</div>
-                </div>
-                <div class="slot-stat" style="text-align:right;">
-                    <div class="label">Available Slots</div>
-                    <div class="val" id="det-avail">-</div>
-                </div>
-            </div>
-
-            <h3 style="margin-bottom:15px; border-bottom:1px solid var(--border); padding-bottom:10px;">ACTIVE VEHICLES Tracker</h3>
-            <div style="background:var(--surface); border:1px solid var(--border); border-radius:12px; overflow:hidden;">
-                <table class="vehicle-table">
-                    <thead>
-                        <tr>
-                            <th>Type</th>
-                            <th>Reg. Number</th>
-                            <th>Entry Time</th>
-                            <th>Live Duration</th>
-                            <th style="text-align:right;">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody id="det-vehicles">
-                        <!-- Populated by JS -->
-                    </tbody>
-                </table>
-            </div>
+        
+        <div id="lot-container" class="lot-grid">
+            <!-- Rendered by JS -->
         </div>
     </div>
 
@@ -240,66 +180,9 @@
         </div>
     </div>
 
-    <!-- VEHICLE MODAL -->
-    <div id="v-modal" style="display:none; position:fixed; top:0; left:0; width:100vw; height:100vh; background:rgba(0,0,0,0.8); align-items:center; justify-content:center; z-index:50;">
-        <div class="auth-container" style="border-color:var(--accent);">
-            <div class="auth-header">
-                <h1 style="font-size:1.5rem;">Vehicle Entry</h1>
-                <p>Register a new parked vehicle</p>
-            </div>
-            <div class="input-group">
-                <label>Vehicle Type</label>
-                <select id="v-type">
-                    <option value="Car">Car</option>
-                    <option value="Bike">Bike</option>
-                    <option value="Truck">Truck</option>
-                    <option value="Tempo">Tempo</option>
-                    <option value="Cycle">Cycle</option>
-                </select>
-            </div>
-            <div class="input-group">
-                <label>Vehicle Number (Optional)</label>
-                <input type="text" id="v-num" placeholder="e.g. MH-12-AB-1234" style="text-transform:uppercase;">
-            </div>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="btn-outline" style="flex:1;" onclick="closeVehicleModal()">Cancel</button>
-                <button class="btn-primary" style="flex:1; margin-top:0;" onclick="submitVehicle()">Inject</button>
-            </div>
-        </div>
-    </div>
-
-    <!-- RECEIPT MODAL -->
-    <div id="receipt-modal">
-        <div class="receipt-card">
-            <div class="r-header">
-                <h2>INVOICE</h2>
-                <div id="r-lot" style="font-size:0.8rem; margin-top:5px; color:#555;">Parking Lot Name</div>
-            </div>
-            
-            <div class="r-row"><span>Type:</span> <strong id="r-type">Car</strong></div>
-            <div class="r-row"><span>Number:</span> <strong id="r-num">-</strong></div>
-            <div class="r-row"><span>Entry Time:</span> <strong id="r-in">00:00 AM</strong></div>
-            <div class="r-row"><span>Exit Time:</span> <strong id="r-out">00:00 PM</strong></div>
-            <div class="r-row"><span>Duration:</span> <strong id="r-dur">2 Hrs</strong></div>
-            
-            <div class="r-total">
-                <span>TOTAL DUE</span>
-                <span id="r-price">$0.00</span>
-            </div>
-
-            <div class="no-print" style="margin-top:30px; display:flex; gap:10px;">
-                <button class="btn-outline" style="flex:1; border-color:#000; color:#000;" onclick="closeReceipt()">Close</button>
-                <button class="btn-primary" style="flex:1; margin-top:0; background:#000; color:#fff;" onclick="window.print()">Print PDF</button>
-            </div>
-        </div>
-    </div>
-
     <script>
         const API_BASE = "http://127.0.0.1:3001/api";
         let activeUser = null;
-        let activeDetailLotId = null;
-        let activeVehicles = [];
-        let timerInterval = null;
 
         // Init
         window.onload = () => {
@@ -320,24 +203,14 @@
         }
 
         function loadView(viewId) {
-            // Cleanup timers
-            if(timerInterval) { clearInterval(timerInterval); timerInterval = null; }
-
             document.querySelectorAll('.view').forEach(el => el.classList.remove('active'));
             const view = document.getElementById(viewId);
             view.classList.add('active');
-            
-            try {
-                if (typeof gsap !== 'undefined') {
-                    gsap.fromTo(view, { opacity: 0, scale:0.98 }, { opacity: 1, scale:1, duration: 0.4, ease: "power3.out" });
-                }
-            } catch (e) { console.warn("GSAP skipped:", e); }
+            gsap.fromTo(view, { opacity: 0, y: 15 }, { opacity: 1, y: 0, duration: 0.5, ease: "power3.out" });
 
             if(viewId === 'view-dashboard') {
-                document.getElementById('dash-name').innerText = activeUser?.name || "Owner";
+                document.getElementById('dash-name').innerText = activeUser.name;
                 fetchParkingLots();
-            } else if(viewId === 'view-parking-detail' && activeDetailLotId) {
-                fetchParkingDetail();
             }
         }
 
@@ -346,6 +219,7 @@
             document.getElementById('toggle-login').classList.remove('active');
             document.getElementById('toggle-signup').classList.remove('active');
             document.getElementById(`toggle-${mode}`).classList.add('active');
+            
             document.getElementById('form-login').style.display = mode === 'login' ? 'block' : 'none';
             document.getElementById('form-signup').style.display = mode === 'signup' ? 'block' : 'none';
         }
@@ -354,6 +228,7 @@
             const email = document.getElementById('log-email').value.trim();
             const password = document.getElementById('log-pass').value.trim();
             if(!email || !password) return showToast("Missing credentials", true);
+
             try {
                 const res = await fetch(`${API_BASE}/auth/login`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -361,6 +236,7 @@
                 });
                 const data = await res.json();
                 if(!res.ok) throw new Error(data.error);
+
                 localStorage.setItem('ownerSession', JSON.stringify(data));
                 activeUser = data;
                 showToast("ACCESS GRANTED");
@@ -373,6 +249,7 @@
             const email = document.getElementById('su-email').value.trim();
             const password = document.getElementById('su-pass').value.trim();
             if(!name || !email || !password) return showToast("All fields required", true);
+
             try {
                 const res = await fetch(`${API_BASE}/auth/signup`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
@@ -380,6 +257,7 @@
                 });
                 const data = await res.json();
                 if(!res.ok) throw new Error(data.error);
+
                 localStorage.setItem('ownerSession', JSON.stringify(data));
                 activeUser = data;
                 showToast("DB PROFILE CONSTRUCTED");
@@ -393,7 +271,7 @@
             loadView('view-auth');
         }
 
-        // ================= DASHBOARD =================
+        // ================= PARKING =================
         async function fetchParkingLots() {
             try {
                 const res = await fetch(`${API_BASE}/parking/owner/${activeUser.id}`);
@@ -405,34 +283,35 @@
         function renderLots(lots) {
             const container = document.getElementById('lot-container');
             if(lots.length === 0) {
-                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted); border:1px dashed var(--border); border-radius:12px;">No parking terminals explicitly registered.</div>`;
+                container.innerHTML = `<div style="grid-column:1/-1; text-align:center; padding:40px; color:var(--text-muted); border:1px dashed var(--border); border-radius:12px;">No parking terminals explicitly registered to your DB profile. Click "Add Parking" to inject a schema.</div>`;
                 return;
             }
 
             container.innerHTML = lots.map(lot => {
                 const occupied = lot.total_slots - lot.available_slots;
                 return `
-                <div class="lot-card" id="card-${lot.id}" onclick="navToDetail(event, '${lot.id}')">
-                    <button class="delete-btn" onclick="deleteParking(event, '${lot.id}')">DELETE</button>
+                <div class="lot-card" id="card-${lot.id}">
+                    <button class="delete-btn" onclick="deleteParking('${lot.id}')">DELETE</button>
                     <h3>${lot.name}</h3>
-                    <p>📍 ${lot.location} &nbsp;|&nbsp; $${lot.price_per_hour.toFixed(2)}/hr</p>
+                    <p>📍 ${lot.location} &nbsp;|&nbsp; $${lot.price_per_hour}/hr</p>
+                    
                     <div class="slot-display">
                         <div class="slot-stat">
                             <div class="label">Available Slots</div>
-                            <div class="val" id="avail-${lot.id}" style="color:${lot.available_slots > 0 ? 'var(--accent)' : 'var(--danger)'};">${lot.available_slots} / ${lot.total_slots}</div>
+                            <div class="val" id="avail-${lot.id}">${lot.available_slots} / ${lot.total_slots}</div>
+                        </div>
+                        <div class="controls">
+                            <!-- +1 means a car entered (Decrease available slots) -->
+                            <button class="btn-ctrl dec" onclick="updateSlot('${lot.id}', 'decrease')" title="Vehicle Enters (-1 Avail)">-</button>
+                            <!-- -1 means a car left (Increase available slots) -->
+                            <button class="btn-ctrl inc" onclick="updateSlot('${lot.id}', 'increase')" title="Vehicle Exits (+1 Avail)">+</button>
                         </div>
                     </div>
-                    <div class="progress-bar">
+                    <div class="progress-bar" style="width:100%; height:4px; background:var(--bg); border-radius:4px; overflow:hidden;">
                         <div style="width: ${(occupied/lot.total_slots)*100}%; height:100%; background:var(--accent); transition:0.3s; ${occupied === lot.total_slots ? 'background:var(--danger);' : ''}"></div>
                     </div>
                 </div>`;
             }).join('');
-        }
-
-        function navToDetail(e, lotId) {
-            if(e.target.tagName === 'BUTTON') return; // Ignore delete clicks
-            activeDetailLotId = lotId;
-            loadView('view-parking-detail');
         }
 
         async function addParking() {
@@ -440,6 +319,7 @@
             const location = document.getElementById('add-loc').value.trim();
             const cap = parseInt(document.getElementById('add-cap').value);
             const rate = parseFloat(document.getElementById('add-rate').value) || 0;
+
             if(!name || !location || !cap) return showToast("Missing terminal variables", true);
 
             try {
@@ -449,18 +329,19 @@
                 });
                 const data = await res.json();
                 if(!res.ok) throw new Error(data.error);
-                
+
+                // Reset
                 document.getElementById('add-name').value = '';
                 document.getElementById('add-loc').value = '';
                 document.getElementById('add-cap').value = '';
                 document.getElementById('add-rate').value = '';
+
                 showToast("TERMINAL CREATED");
                 loadView('view-dashboard');
             } catch(e) { showToast(e.message, true); }
         }
 
-        async function deleteParking(e, lotId) {
-            e.stopPropagation();
+        async function deleteParking(lotId) {
             if(!confirm("Are you sure you want to destruct this terminal? Data cannot be recovered.")) return;
             try {
                 const res = await fetch(`${API_BASE}/parking/${lotId}`, { method: 'DELETE' });
@@ -470,140 +351,19 @@
             } catch(e) { showToast(e.message, true); }
         }
 
-        // ================= DETAIL PAGE =================
-        async function fetchParkingDetail() {
+        async function updateSlot(lotId, action) {
             try {
-                // Fetch Lot info
-                const res = await fetch(`${API_BASE}/parking/${activeDetailLotId}`);
-                if(!res.ok) throw new Error("Lot fetch failed");
-                const lot = await res.json();
-
-                // Fetch Vehicles
-                const vRes = await fetch(`${API_BASE}/parking/${activeDetailLotId}/vehicles`);
-                activeVehicles = await vRes.json();
-
-                // Build Detail UI
-                document.getElementById('det-name').innerText = lot.name;
-                document.getElementById('det-loc').innerText = `📍 ${lot.location} | $${lot.price_per_hour.toFixed(2)}/hr`;
-                document.getElementById('det-total').innerText = lot.total_slots;
-                document.getElementById('det-avail').innerText = lot.available_slots;
-                document.getElementById('det-avail').style.color = lot.available_slots > 0 ? "var(--accent)" : "var(--danger)";
-
-                renderActiveVehicles();
-                
-                // Live Duration Timer
-                if(timerInterval) clearInterval(timerInterval);
-                timerInterval = setInterval(updateLiveDurations, 5000); // UI reflow every 5 seconds
-
-            } catch(e) { showToast("Error syncing Detail View", true); loadView('view-dashboard'); }
-        }
-
-        function renderActiveVehicles() {
-            const tbody = document.getElementById('det-vehicles');
-            if(activeVehicles.length === 0) {
-                tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; padding:30px; color:var(--text-muted);">No active vehicles in this terminal.</td></tr>`;
-                return;
-            }
-
-            const cMap = { 'Car': '#3b82f6', 'Bike': '#22c55e', 'Truck': '#f97316', 'Tempo': '#a855f7', 'Cycle': '#eab308' };
-
-            tbody.innerHTML = activeVehicles.map(v => {
-                const col = cMap[v.vehicle_type] || 'var(--text-muted)';
-                const dateStr = new Date(v.entry_time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-                return `
-                <tr>
-                    <td>
-                        <span style="display:inline-block; width:8px; height:8px; background:${col}; border-radius:50%; margin-right:6px; box-shadow:0 0 5px ${col};"></span>
-                        <span style="font-weight:bold;">${v.vehicle_type}</span>
-                    </td>
-                    <td style="font-family:var(--font-mono); color:var(--text-muted);">${v.vehicle_number || '-'}</td>
-                    <td>${dateStr}</td>
-                    <td style="color:var(--accent); font-family:var(--font-mono); font-weight:bold;" id="dur-${v.id}">Calculating...</td>
-                    <td style="text-align:right;">
-                        <button class="btn-outline" style="border-color:var(--danger-dim); color:var(--danger); padding:6px 12px; font-size:0.8rem;" onclick="removeVehicle('${v.id}')">EXIT</button>
-                    </td>
-                </tr>`;
-            }).join('');
-
-            updateLiveDurations(); // Initial Run
-        }
-
-        function updateLiveDurations() {
-            const now = Date.now();
-            activeVehicles.forEach(v => {
-                const el = document.getElementById(`dur-${v.id}`);
-                if(el) {
-                    const diffMs = now - v.entry_time;
-                    const hrs = Math.floor(diffMs / 3600000);
-                    const mins = Math.floor((diffMs % 3600000) / 60000);
-                    el.innerText = `${hrs}hr ${mins}m`;
-                }
-            });
-        }
-
-        // ================= VEHICLE OPERATIONS =================
-        function openVehicleModal() {
-            if(!activeDetailLotId) return showToast("Terminal unselected", true);
-            document.getElementById('v-modal').style.display = 'flex';
-        }
-
-        function closeVehicleModal() {
-            document.getElementById('v-modal').style.display = 'none';
-            document.getElementById('v-type').value = 'Car';
-            document.getElementById('v-num').value = '';
-        }
-
-        async function submitVehicle() {
-            if(!activeDetailLotId) return;
-            const type = document.getElementById('v-type').value;
-            const num = document.getElementById('v-num').value.trim();
-
-            try {
-                const res = await fetch(`${API_BASE}/parking/${activeDetailLotId}/vehicles/enter`, {
+                const res = await fetch(`${API_BASE}/parking/${lotId}/slots`, {
                     method: 'POST', headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ vehicle_type: type, vehicle_number: num })
+                    body: JSON.stringify({ action })
                 });
                 const data = await res.json();
                 if(!res.ok) throw new Error(data.error);
                 
-                showToast(`VEHICLE REGISTERED`);
-                closeVehicleModal();
-                fetchParkingDetail(); 
+                // Animate and refresh block
+                gsap.fromTo(`#avail-${lotId}`, { scale: 1.2, color: action === 'increase' ? 'var(--accent)' : 'var(--danger)' }, { scale: 1, color: 'var(--accent)', duration: 0.4 });
+                fetchParkingLots(); // Quick sync
             } catch(e) { showToast(e.message, true); }
-        }
-
-        async function removeVehicle(vId) {
-            try {
-                const res = await fetch(`${API_BASE}/parking/${activeDetailLotId}/vehicles/${vId}/exit`, {
-                    method: 'POST'
-                });
-                const data = await res.json();
-                if(!res.ok) throw new Error(data.error);
-
-                // Show Receipt!
-                showReceipt(data.receipt);
-                // Refresh list in background
-                fetchParkingDetail();
-            } catch(e) { showToast(e.message, true); }
-        }
-
-        function showReceipt(rcpt) {
-            document.getElementById('r-lot').innerText = rcpt.lot_name;
-            document.getElementById('r-type').innerText = rcpt.vehicle_type;
-            document.getElementById('r-num').innerText = rcpt.vehicle_number || 'N/A';
-            
-            const pTime = time => new Date(time).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-            document.getElementById('r-in').innerText = pTime(rcpt.entry_time);
-            document.getElementById('r-out').innerText = pTime(rcpt.exit_time);
-            
-            document.getElementById('r-dur').innerText = `${rcpt.durationHours.toFixed(1)} Hrs`;
-            document.getElementById('r-price').innerText = `$${rcpt.total_price.toFixed(2)}`;
-            
-            document.getElementById('receipt-modal').style.display = 'flex';
-        }
-
-        function closeReceipt() {
-            document.getElementById('receipt-modal').style.display = 'none';
         }
     </script>
 </body>
