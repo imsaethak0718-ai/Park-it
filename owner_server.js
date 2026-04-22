@@ -163,6 +163,14 @@ app.post('/api/parking/:id/vehicles/:vid/exit', (req, res) => {
     });
 });
 
-app.listen(3001, () => {
-    console.log("Single-Role Owner Backend running on http://localhost:3001");
+// =======================
+// SYSTEM CORE & PORT BINDING
+// =======================
+app.get("/", (req, res) => {
+    res.send("Backend is live");
+});
+
+const PORT = process.env.PORT || 3000;
+app.listen(PORT, () => {
+    console.log(`Single-Role Owner Backend running natively on port ${PORT}`);
 });
