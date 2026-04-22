@@ -560,7 +560,7 @@
                     <input type="number" id="add-cap" placeholder="50" min="1">
                 </div>
                 <div class="input-group" style="flex:1;">
-                    <label>Rate / Hour ($)</label>
+                    <label>Rate / Hour (₹)</label>
                     <input type="number" id="add-rate" placeholder="5.00" min="0" step="0.5">
                 </div>
             </div>
@@ -613,7 +613,7 @@
 
             <div class="r-total">
                 <span>TOTAL DUE</span>
-                <span id="r-price">$0.00</span>
+                <span id="r-price">₹0.00</span>
             </div>
 
             <div class="no-print" style="margin-top:30px; display:flex; gap:10px;">
@@ -747,7 +747,7 @@
                 <div class="lot-card" id="card-${lot.id}" onclick="navToDetail(event, '${lot.id}')">
                     <button class="delete-btn" onclick="deleteParking(event, '${lot.id}')">DELETE</button>
                     <h3>${lot.name}</h3>
-                    <p>📍 ${lot.location} &nbsp;|&nbsp; $${lot.price_per_hour.toFixed(2)}/hr</p>
+                    <p>📍 ${lot.location} &nbsp;|&nbsp; ₹${lot.price_per_hour.toFixed(2)}/hr</p>
                     <div class="slot-display">
                         <div class="slot-stat">
                             <div class="label">Available Slots</div>
@@ -816,7 +816,7 @@
 
                 // Build Detail UI
                 document.getElementById('det-name').innerText = lot.name;
-                document.getElementById('det-loc').innerText = `📍 ${lot.location} | $${lot.price_per_hour.toFixed(2)}/hr`;
+                document.getElementById('det-loc').innerText = `📍 ${lot.location} | ₹${lot.price_per_hour.toFixed(2)}/hr`;
                 document.getElementById('det-total').innerText = lot.total_slots;
                 document.getElementById('det-avail').innerText = lot.available_slots;
                 document.getElementById('det-avail').style.color = lot.available_slots > 0 ? "var(--accent)" : "var(--danger)";
@@ -929,7 +929,7 @@
             document.getElementById('r-out').innerText = pTime(rcpt.exit_time);
 
             document.getElementById('r-dur').innerText = `${rcpt.durationHours.toFixed(1)} Hrs`;
-            document.getElementById('r-price').innerText = `$${rcpt.total_price.toFixed(2)}`;
+            document.getElementById('r-price').innerText = `₹${rcpt.total_price.toFixed(2)}`;
 
             document.getElementById('receipt-modal').style.display = 'flex';
         }
