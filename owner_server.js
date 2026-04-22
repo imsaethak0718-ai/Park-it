@@ -163,6 +163,6 @@ app.post('/api/parking/:id/vehicles/:vid/exit', (req, res) => {
     });
 });
 
-app.listen(3001, '0.0.0.0', () => {
-    console.log("Single-Role Owner Backend running natively on http://127.0.0.1:3001");
+app.listen(3001, () => {
+    console.log("Single-Role Owner Backend running on http://localhost:3001");
 });
