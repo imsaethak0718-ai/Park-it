@@ -5,7 +5,10 @@
   "main": "owner_server.js",
   "scripts": {
     "start": "node owner_server.js",
-    "postinstall": "npm rebuild sqlite3"
+    "postinstall": "npm rebuild sqlite3 --build-from-source"
+  },
+  "engines": {
+    "node": "20.x"
   },
   "dependencies": {
     "cors": "^2.8.6",
