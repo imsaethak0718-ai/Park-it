@@ -4,7 +4,8 @@
   "description": "Parking OS Backend Integration",
   "main": "owner_server.js",
   "scripts": {
-    "start": "node owner_server.js"
+    "start": "node owner_server.js",
+    "postinstall": "npm rebuild sqlite3"
   },
   "dependencies": {
     "cors": "^2.8.6",
